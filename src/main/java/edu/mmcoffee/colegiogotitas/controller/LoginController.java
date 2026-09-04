@@ -15,44 +15,39 @@ import main.java.edu.mmcoffee.colegiogotitas.dto.response.LoginResponse;
 
 
 public class LoginController implements Initializable {
-    
+// atributos
     private final AuthService authService;
     private final SceneManager sceneManager;
-@FXML
-private TextField txtFieldEmail;
+    @FXML
+    private TextField txtFieldEmail;
+    @FXML
+    private TextField txtFieldPass;
+   public LoginController(AuthService authService, SceneManager sceneManager){
+       this.authService = authService;
+       this.sceneManager = sceneManager;
+   } 
 
-@FXML
-private TextField txtFieldPass;
-    
-    public LoginController(AuthService authService, SceneManager sceneManager) {
-        this.authService = authService;
-        this.sceneManager = sceneManager;
-    }
-   
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        System.out.println("TOODO LO QUE ESTE ACA SE EJECUTA CUANDO SE MUESTRA LA VISTA");
-        
+        System.out.println("TODO LO QUE ESTE ACA, SE EJECUTA CUANDO SE MUESTRA LA VISTA");
     }    
-    
-    //metodos
-   public void handleLogin()throws Exception{
-     //verificar si los campos estan llenos
-       if(txtFieldEmail.getText().isEmpty() || txtFieldPass.getText().isEmpty()){
-       sceneManager.showInfoAlert("campos faltantes",
+
+    public void handleLogin()throws Exception{
+        if(txtFieldEmail.getText().isEmpty()||txtFieldPass.getText().isEmpty()){
+        sceneManager.showInfoAlert("campos faltantes",
                     "Revisar información ",
-                    "uno o mas campos estan vacios", 
-                    Alert.AlertType.INFORMATION);
-                 
-    }else{
-try{
-LoginResponse responseService = authService.login(new LoginRequest (txtFieldEmail.getText(), txtFieldPass.getText ()));
-LoginResponse userLogged = new LoginResponse (responseService.getNombre (), responseService.getApellido ());
-sceneManager. showInfoAlert ("Bienvenido a Gotitas del Saber", "Inicio exitoso", "Bievenido: " + userLogged. getNombre (), Alert. AlertType. INFORMATION);
-}catch (RuntimeException e) {
-sceneManager. showInfoAlert ("Datos incorrectos", "Revisa tu informacion", "Intenta de nuevo", Alert. AlertType. INFORMATION) ;
-           }  
-      } 
-       
-    }  
+                    "uno o mas campos estan vacions", 
+                    Alert.AlertType.WARNING);
+        }else{
+            try{
+            LoginResponse responseService = authService.login(new LoginRequest(txtFieldEmail.getText(),txtFieldPass.getText()));
+            LoginResponse userLogged = new LoginResponse(responseService.getNombre(),responseService.getApellido()); 
+            sceneManager.showInfoAlert("bienvenido a Gotitas del saber", "inicio exitoso", "bienvenido :"+ userLogged.getNombre(), Alert.AlertType.INFORMATION);
+            sceneManager.showDashBoardView();
+        }catch(RuntimeException e){
+            sceneManager.showInfoAlert("datos incorrectos", "Revisa tu informacion", "intenta de nuevo", Alert.AlertType.INFORMATION);
+        }
+        }
+    }
+ 
 }
