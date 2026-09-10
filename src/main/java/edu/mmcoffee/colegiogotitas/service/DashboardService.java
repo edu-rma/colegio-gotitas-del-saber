@@ -1,73 +1,199 @@
+
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package main.java.edu.mmcoffee.colegiogotitas.service;
 
 import javafx.collections.ObservableList;
+
 import main.java.edu.mmcoffee.colegiogotitas.model.Curso;
 import main.java.edu.mmcoffee.colegiogotitas.model.Estudiante;
 import main.java.edu.mmcoffee.colegiogotitas.repository.EstudianteRepository;
 
-
 public class DashboardService {
+
     private EstudianteRepository estudianteRepository;
 
     public DashboardService(EstudianteRepository dashboardRepository) {
         this.estudianteRepository = dashboardRepository;
     }
 
+    // ==========================================================
+    // LISTAR ESTUDIANTES
+    // ==========================================================
+
     public ObservableList<Estudiante> listStudent() throws Exception {
-        if (estudianteRepository.findAll() == null) {
-            throw new RuntimeException("sin datos que mostrar");
-        } else {
-            return estudianteRepository.findAll();
+
+        ObservableList<Estudiante> estudiantes =
+                estudianteRepository.findAll();
+
+        if (estudiantes == null || estudiantes.isEmpty()) {
+            throw new RuntimeException(
+                    "Sin datos que mostrar"
+            );
         }
+
+        return estudiantes;
     }
 
+    // ==========================================================
+    // LISTAR CURSOS
+    // ==========================================================
+
     /**
-     * Cursos disponibles para llenar el ComboBox del diálogo de registro.
+     * Obtiene los cursos disponibles para llenar
+     * el ComboBox del formulario de registro.
      */
     public ObservableList<Curso> listCursos() throws Exception {
+
         return estudianteRepository.findAllCursos();
     }
 
+    // ==========================================================
+    // CREAR ESTUDIANTE
+    // ==========================================================
+
     /**
-     * Registra un estudiante y lo matricula automáticamente en el curso
-     * elegido (la sección, la matrícula y la asignación de curso se
-     * generan solas a partir del id_curso).
+     * Crea un estudiante y lo matricula automáticamente
+     * en el curso seleccionado.
      */
-    public void crearEstudiante(String nombre, String apellido, String correo, String idCurso) throws Exception {
-        validarDatosBasicos(nombre, apellido, correo);
-        if (idCurso == null || idCurso.isEmpty()) {
-            throw new RuntimeException("Debes seleccionar un curso para el estudiante.");
+    public void crearEstudiante(
+            String nombre,
+            String apellido,
+            String correo,
+            String idCurso) throws Exception {
+
+        validarDatosBasicos(
+                nombre,
+                apellido,
+                correo
+        );
+
+        if (idCurso == null || idCurso.trim().isEmpty()) {
+
+            throw new RuntimeException(
+                    "Debes seleccionar un curso para el estudiante."
+            );
         }
-        Estudiante nuevo = new Estudiante(null, nombre, apellido, correo, null, null, null, null);
-        estudianteRepository.registrarConCurso(nuevo, idCurso);
+
+        Estudiante nuevo = new Estudiante(
+                null,
+                nombre,
+                apellido,
+                correo,
+                null,
+                null,
+                null,
+                null
+        );
+
+        estudianteRepository.registrarConCurso(
+                nuevo,
+                idCurso
+        );
     }
 
-    public void actualizarEstudiante(String idEstudiante, String nombre, String apellido, String correo) throws Exception {
-        if (idEstudiante == null || idEstudiante.isEmpty()) {
-            throw new RuntimeException("No hay un estudiante seleccionado para actualizar.");
+    // ==========================================================
+    // ACTUALIZAR ESTUDIANTE
+    // ==========================================================
+
+    /**
+     * Actualiza los datos básicos de un estudiante.
+     */
+    public void actualizarEstudiante(
+            String idEstudiante,
+            String nombre,
+            String apellido,
+            String correo) throws Exception {
+
+        if (idEstudiante == null
+                || idEstudiante.trim().isEmpty()) {
+
+            throw new RuntimeException(
+                    "No hay un estudiante seleccionado para actualizar."
+            );
         }
-        validarDatosBasicos(nombre, apellido, correo);
-        Estudiante actualizado = new Estudiante(idEstudiante, nombre, apellido, correo, null, null, null, null);
-        estudianteRepository.actualizar(actualizado);
+
+        validarDatosBasicos(
+                nombre,
+                apellido,
+                correo
+        );
+
+        Estudiante actualizado = new Estudiante(
+                idEstudiante,
+                nombre,
+                apellido,
+                correo,
+                null,
+                null,
+                null,
+                null
+        );
+
+        estudianteRepository.actualizar(
+                actualizado
+        );
     }
 
-    public void eliminarEstudiante(String idEstudiante) throws Exception {
-        if (idEstudiante == null || idEstudiante.isEmpty()) {
-            throw new RuntimeException("No hay un estudiante seleccionado para eliminar.");
+    // ==========================================================
+    // ELIMINAR ESTUDIANTE
+    // ==========================================================
+
+    /**
+     * Elimina un estudiante junto con sus
+     * registros relacionados.
+     */
+    public void eliminarEstudiante(
+            String idEstudiante) throws Exception {
+
+        if (idEstudiante == null
+                || idEstudiante.trim().isEmpty()) {
+
+            throw new RuntimeException(
+                    "No hay un estudiante seleccionado para eliminar."
+            );
         }
-        estudianteRepository.eliminar(idEstudiante);
+
+        estudianteRepository.eliminar(
+                idEstudiante
+        );
     }
 
-    private void validarDatosBasicos(String nombre, String apellido, String correo) {
-        if (nombre == null || nombre.trim().isEmpty()
-                || apellido == null || apellido.trim().isEmpty()
-                || correo == null || correo.trim().isEmpty()) {
-            throw new RuntimeException("Nombre, apellido y correo son obligatorios.");
+    // ==========================================================
+    // VALIDAR DATOS
+    // ==========================================================
+
+    private void validarDatosBasicos(
+            String nombre,
+            String apellido,
+            String correo) {
+
+        if (nombre == null
+                || nombre.trim().isEmpty()) {
+
+            throw new RuntimeException(
+                    "El nombre es obligatorio."
+            );
+        }
+
+        if (apellido == null
+                || apellido.trim().isEmpty()) {
+
+            throw new RuntimeException(
+                    "El apellido es obligatorio."
+            );
+        }
+
+        if (correo == null
+                || correo.trim().isEmpty()) {
+
+            throw new RuntimeException(
+                    "El correo es obligatorio."
+            );
         }
     }
-
 }
+
