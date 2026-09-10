@@ -6,44 +6,69 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
+import main.java.edu.mmcoffee.colegiogotitas.controller.DashboardController;
 import main.java.edu.mmcoffee.colegiogotitas.controller.LoginController;
 import main.java.edu.mmcoffee.colegiogotitas.repository.AuthRepository;
+import main.java.edu.mmcoffee.colegiogotitas.repository.EstudianteRepository;
 import main.java.edu.mmcoffee.colegiogotitas.service.AuthService;
+import main.java.edu.mmcoffee.colegiogotitas.service.DashboardService;
 
+ 
+ 
 public class SceneManager {
-
     private Stage primaryStage;
-    private final String FXML_PATH = "/main/resources/view/"; 
-    public SceneManager(Stage primaryStage) {
+    private final String FXML_PATH = "/main/resources/view/";
+    public SceneManager(Stage primaryStage){
         this.primaryStage = primaryStage;
     }
-
-    public void showLoginView() throws Exception {
+    public void showLoginView()throws Exception{
         FXMLLoader loader = new FXMLLoader(getClass().getResource(FXML_PATH + "login-view.fxml"));
+ 
+    loader.setControllerFactory(
+    clazz -> { 
+        if(clazz == LoginController.class){
+            AuthRepository authRepository = new AuthRepository();
+            AuthService authService = new AuthService(authRepository);
+            return new LoginController(authService, this);
+        }
+        try{ 
+            return clazz.getDeclaredConstructor().newInstance();
+        }catch(Exception e){
+            throw new RuntimeException("Error al crear el constructor" + e.getMessage());
+        }
+    });
+    Parent root = loader.load();
+    Scene scene = new Scene(root, 600, 600);
+    primaryStage.setScene(scene);
+    primaryStage.centerOnScreen();
+    primaryStage.show();
+            }
 
-        loader.setControllerFactory(
-                clazz -> {
-                    if (clazz == LoginController.class) {
-                        AuthRepository authRepository = new AuthRepository();
-                        AuthService authService = new AuthService(authRepository);
-                        return new LoginController(authService, this);
+    
+    
 
-                    }
-                    try {
-                        return clazz.getDeclaredConstructor().newInstance();
-                    } catch (Exception e) {
-                        throw new RuntimeException("ERROR AL CREAR EL CONSTRUCTOR" + e.getMessage());
-                    }
-                }
+   public void showDashBoardView()throws Exception{
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(FXML_PATH+"dashboard-view.fxml"));
+        loader.setControllerFactory(clazz -> {
+            if(clazz == DashboardController.class){
+                EstudianteRepository dashBoardRepository = new EstudianteRepository();
+                DashboardService dasboardService = new DashboardService(dashBoardRepository);
+               return new DashboardController(dasboardService, this);
+            }
+            try{
+                return clazz.getDeclaredConstructor().newInstance();
+            }catch(Exception e){
+                throw new RuntimeException("error al crear el constructor" + e.getMessage());
+            }
+        }
         );
-        
         Parent root = loader.load();
-        Scene scene = new Scene(root,600,410);
+        Scene scene = new Scene(root , 600, 400);
         primaryStage.setScene(scene);
         primaryStage.centerOnScreen();
         primaryStage.show();
     }
-    
+//VENTA MODAL, PARA MOSTRAR ALERTA
     public void showInfoAlert(String head, String title, String content, AlertType type){
         Alert alert = new Alert(type);
         alert.initOwner(this.primaryStage);
@@ -52,5 +77,5 @@ public class SceneManager {
         alert.setHeaderText(head);
         alert.showAndWait();
     }
-     
+ 
 }

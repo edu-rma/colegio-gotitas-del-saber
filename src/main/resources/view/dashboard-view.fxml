@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<?import java.net.URL?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+ 
+<AnchorPane id="AnchorPane" prefHeight="595.0" prefWidth="804.0" styleClass="mainFxmlClass" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/26" fx:controller="main.java.edu.mmcoffee.colegiogotitas.controller.DashboardController">
+<stylesheets>
+<URL value="@dashboard-view.css" />
+</stylesheets>
+<children>
+<GridPane layoutX="-2.0" prefHeight="595.0" prefWidth="804.0">
+<columnConstraints>
+<ColumnConstraints hgrow="SOMETIMES" maxWidth="193.60000610351562" minWidth="7.200015068054199" prefWidth="83.6" />
+<ColumnConstraints hgrow="SOMETIMES" maxWidth="392.7999849319458" minWidth="10.0" prefWidth="75.19998779296876" />
+<ColumnConstraints hgrow="SOMETIMES" maxWidth="644.8000122070313" minWidth="10.0" prefWidth="644.8000122070313" />
+</columnConstraints>
+<rowConstraints>
+<RowConstraints maxHeight="130.59998168945313" minHeight="0.0" prefHeight="27.19998092651366" vgrow="SOMETIMES" />
+<RowConstraints maxHeight="480.80001907348634" minHeight="10.0" prefHeight="480.80001907348634" vgrow="SOMETIMES" />
+<RowConstraints maxHeight="76.80002441406253" minHeight="10.0" prefHeight="43.60000000000002" vgrow="SOMETIMES" />
+</rowConstraints>
+<children>
+<Pane prefHeight="546.0" prefWidth="801.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+<children>
+<TableView fx:id="tvEstudiante" layoutX="-156.0" layoutY="-50.0" prefHeight="560.0" prefWidth="816.0">
+<columns>
+<TableColumn fx:id="fbcolumnid" prefWidth="75.0" text="id" />
+<TableColumn fx:id="dbcolumnnombre" prefWidth="120.80001831054688" text="nombre" />
+<TableColumn fx:id="dbapellidocolumn" prefWidth="119.19999694824219" text="apellido " />
+<TableColumn fx:id="dbcorreocolumn" prefWidth="132.0" text="correo_electronico " />
+<TableColumn fx:id="dbseccioncolumn" minWidth="0.0" prefWidth="48.79998779296875" text="seccion" />
+<TableColumn fx:id="dbcursocolumn" minWidth="7.20001220703125" prefWidth="62.39996337890625" text="curso" />
+<TableColumn fx:id="dbnombredcolumn" prefWidth="107.99993896484375" text="nombre docente" />
+<TableColumn fx:id="dbapellidodcolumn" prefWidth="136.00006103515625" text="apellido docente " />
+</columns>
+</TableView>
+</children>
+</Pane>
+</children>
+</GridPane>
+</children>
+</AnchorPane>
