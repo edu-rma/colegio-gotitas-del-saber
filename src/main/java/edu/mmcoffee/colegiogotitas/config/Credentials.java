@@ -9,7 +9,6 @@ package main.java.edu.mmcoffee.colegiogotitas.config;
  * @author informatica
  */
 public class Credentials {
-    
 public static final String DATA_BASE = System.getenv("DATA_BASE");
 public static final String URL_DB= System.getenv("URL_MYSQL_DB")+DATA_BASE; 
 public static final String USER_DB = System.getenv("USER_MY_SQL");
