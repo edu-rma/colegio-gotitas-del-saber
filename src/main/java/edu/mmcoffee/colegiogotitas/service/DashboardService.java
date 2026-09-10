@@ -1,13 +1,6 @@
-
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package main.java.edu.mmcoffee.colegiogotitas.service;
 
 import javafx.collections.ObservableList;
-
 import main.java.edu.mmcoffee.colegiogotitas.model.Curso;
 import main.java.edu.mmcoffee.colegiogotitas.model.Estudiante;
 import main.java.edu.mmcoffee.colegiogotitas.repository.EstudianteRepository;
@@ -25,14 +18,10 @@ public class DashboardService {
     // ==========================================================
 
     public ObservableList<Estudiante> listStudent() throws Exception {
-
-        ObservableList<Estudiante> estudiantes =
-                estudianteRepository.findAll();
+        ObservableList<Estudiante> estudiantes = estudianteRepository.findAll();
 
         if (estudiantes == null || estudiantes.isEmpty()) {
-            throw new RuntimeException(
-                    "Sin datos que mostrar"
-            );
+            throw new RuntimeException("Sin datos que mostrar");
         }
 
         return estudiantes;
@@ -47,7 +36,6 @@ public class DashboardService {
      * el ComboBox del formulario de registro.
      */
     public ObservableList<Curso> listCursos() throws Exception {
-
         return estudianteRepository.findAllCursos();
     }
 
@@ -65,17 +53,10 @@ public class DashboardService {
             String correo,
             String idCurso) throws Exception {
 
-        validarDatosBasicos(
-                nombre,
-                apellido,
-                correo
-        );
+        validarDatosBasicos(nombre, apellido, correo);
 
         if (idCurso == null || idCurso.trim().isEmpty()) {
-
-            throw new RuntimeException(
-                    "Debes seleccionar un curso para el estudiante."
-            );
+            throw new RuntimeException("Debes seleccionar un curso para el estudiante.");
         }
 
         Estudiante nuevo = new Estudiante(
@@ -89,10 +70,7 @@ public class DashboardService {
                 null
         );
 
-        estudianteRepository.registrarConCurso(
-                nuevo,
-                idCurso
-        );
+        estudianteRepository.registrarConCurso(nuevo, idCurso);
     }
 
     // ==========================================================
@@ -108,19 +86,11 @@ public class DashboardService {
             String apellido,
             String correo) throws Exception {
 
-        if (idEstudiante == null
-                || idEstudiante.trim().isEmpty()) {
-
-            throw new RuntimeException(
-                    "No hay un estudiante seleccionado para actualizar."
-            );
+        if (idEstudiante == null || idEstudiante.trim().isEmpty()) {
+            throw new RuntimeException("No hay un estudiante seleccionado para actualizar.");
         }
 
-        validarDatosBasicos(
-                nombre,
-                apellido,
-                correo
-        );
+        validarDatosBasicos(nombre, apellido, correo);
 
         Estudiante actualizado = new Estudiante(
                 idEstudiante,
@@ -133,9 +103,7 @@ public class DashboardService {
                 null
         );
 
-        estudianteRepository.actualizar(
-                actualizado
-        );
+        estudianteRepository.actualizar(actualizado);
     }
 
     // ==========================================================
@@ -146,20 +114,12 @@ public class DashboardService {
      * Elimina un estudiante junto con sus
      * registros relacionados.
      */
-    public void eliminarEstudiante(
-            String idEstudiante) throws Exception {
-
-        if (idEstudiante == null
-                || idEstudiante.trim().isEmpty()) {
-
-            throw new RuntimeException(
-                    "No hay un estudiante seleccionado para eliminar."
-            );
+    public void eliminarEstudiante(String idEstudiante) throws Exception {
+        if (idEstudiante == null || idEstudiante.trim().isEmpty()) {
+            throw new RuntimeException("No hay un estudiante seleccionado para eliminar.");
         }
 
-        estudianteRepository.eliminar(
-                idEstudiante
-        );
+        estudianteRepository.eliminar(idEstudiante);
     }
 
     // ==========================================================
@@ -171,29 +131,16 @@ public class DashboardService {
             String apellido,
             String correo) {
 
-        if (nombre == null
-                || nombre.trim().isEmpty()) {
-
-            throw new RuntimeException(
-                    "El nombre es obligatorio."
-            );
+        if (nombre == null || nombre.trim().isEmpty()) {
+            throw new RuntimeException("El nombre es obligatorio.");
         }
 
-        if (apellido == null
-                || apellido.trim().isEmpty()) {
-
-            throw new RuntimeException(
-                    "El apellido es obligatorio."
-            );
+        if (apellido == null || apellido.trim().isEmpty()) {
+            throw new RuntimeException("El apellido es obligatorio.");
         }
 
-        if (correo == null
-                || correo.trim().isEmpty()) {
-
-            throw new RuntimeException(
-                    "El correo es obligatorio."
-            );
+        if (correo == null || correo.trim().isEmpty()) {
+            throw new RuntimeException("El correo es obligatorio.");
         }
     }
 }
-

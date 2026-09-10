@@ -14,16 +14,15 @@
             prefHeight="698.0"
             prefWidth="937.0"
             styleClass="mainFxmlClass"
-            xmlns="http://javafx.com/javafx/26"
+            xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="main.java.edu.mmcoffee.colegiogotitas.controller.DashboardController">
 
     <stylesheets>
-        <URL value="@dashboard-view.css" />
+        <URL value="@../css/dashboard-view.css" />
     </stylesheets>
 
     <children>
-
         <GridPane layoutX="-2.0"
                   prefHeight="606.0"
                   prefWidth="792.0">
@@ -63,14 +62,12 @@
             </rowConstraints>
 
             <children>
-
                 <Pane prefHeight="546.0"
                       prefWidth="801.0"
                       GridPane.columnIndex="2"
                       GridPane.rowIndex="1">
 
                     <children>
-
                         <TableView fx:id="tvEstudiante"
                                    layoutX="-156.0"
                                    layoutY="-50.0"
@@ -78,7 +75,6 @@
                                    prefWidth="808.0">
 
                             <columns>
-
                                 <TableColumn fx:id="fbcolumnid"
                                              prefWidth="75.0"
                                              text="id" />
@@ -112,20 +108,21 @@
                                 <TableColumn fx:id="dbapellidodcolumn"
                                              prefWidth="136.00006103515625"
                                              text="apellido docente" />
-
                             </columns>
-
                         </TableView>
-
                     </children>
-
                 </Pane>
-
             </children>
-
         </GridPane>
 
         <!-- Botones del CRUD -->
+
+        <Button fx:id="bteditar"
+                layoutX="811.0"
+                layoutY="40.0"
+                mnemonicParsing="false"
+                onAction="#handleEditar"
+                text="Editar" />
 
         <Button fx:id="Btborrar"
                 layoutX="811.0"
@@ -148,13 +145,5 @@
                 onAction="#handleRegistrar"
                 text="Nuevo estudiante" />
 
-        <Button fx:id="bteditar"
-                layoutX="811.0"
-                layoutY="40.0"
-                mnemonicParsing="false"
-                onAction="#handleEditar"
-                text="Editar" />
-
     </children>
-
 </AnchorPane>

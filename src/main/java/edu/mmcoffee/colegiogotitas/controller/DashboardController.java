@@ -12,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
@@ -28,28 +29,29 @@ import main.java.edu.mmcoffee.colegiogotitas.model.Estudiante;
 import main.java.edu.mmcoffee.colegiogotitas.service.DashboardService;
 import main.java.edu.mmcoffee.colegiogotitas.util.SceneManager;
 
-
 /**
-* FXML Controller class
-*
-* @author anton
-*/
+ * FXML Controller class
+ *
+ * @author anton
+ */
 public class DashboardController implements Initializable {
+
     private DashboardService dashboardService;
     private SceneManager sceneManager;
-         @FXML
+
+    @FXML
     private TableView<Estudiante> tvEstudiante;
     @FXML
     private TableColumn<Estudiante, String> fbcolumnid;
-     @FXML
+    @FXML
     private TableColumn<Estudiante, String> dbcolumnnombre;
-     @FXML
+    @FXML
     private TableColumn<Estudiante, String> dbapellidocolumn;
-     @FXML
+    @FXML
     private TableColumn<Estudiante, String> dbcorreocolumn;
-     @FXML
+    @FXML
     private TableColumn<Estudiante, String> dbseccioncolumn;
-     @FXML
+    @FXML
     private TableColumn<Estudiante, String> dbcursocolumn;
     @FXML
     private TableColumn<Estudiante, String> dbnombredcolumn;
@@ -57,21 +59,18 @@ public class DashboardController implements Initializable {
     private TableColumn<Estudiante, String> dbapellidodcolumn;
 
     @FXML
-    private javafx.scene.control.Button btregistrar;
+    private Button btregistrar;
     @FXML
-    private javafx.scene.control.Button bteditar;
+    private Button bteditar;
     @FXML
-    private javafx.scene.control.Button btactualizar;
+    private Button btactualizar;
     @FXML
-    private javafx.scene.control.Button Btborrar;
+    private Button Btborrar;
 
-
-
-    public DashboardController(DashboardService dashboarService, SceneManager sceneManager) {
-        this.dashboardService = dashboarService;
+    public DashboardController(DashboardService dashboardService, SceneManager sceneManager) {
+        this.dashboardService = dashboardService;
         this.sceneManager = sceneManager;
     }
-
 
     /**
      * Initializes the controller class.
@@ -82,7 +81,7 @@ public class DashboardController implements Initializable {
             handleLoadTablestuden();
         } catch (Exception e) {
             sceneManager.showInfoAlert("Error", "No se pudo cargar la tabla",
-                    e.getMessage(), javafx.scene.control.Alert.AlertType.ERROR);
+                    e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
@@ -232,8 +231,7 @@ public class DashboardController implements Initializable {
 
         pane.setContent(grid);
 
-        // El botón "Guardar" se deshabilita si faltan datos obligatorios,
-        // para no dejar registrar un estudiante sin curso por accidente.
+        // El botón "Guardar" se deshabilita si faltan datos obligatorios
         javafx.scene.Node btnGuardarNode = pane.lookupButton(btnGuardar);
         Runnable validar = () -> {
             boolean camposLlenos = !txtNombre.getText().trim().isEmpty()
@@ -260,5 +258,4 @@ public class DashboardController implements Initializable {
 
         return dialog.showAndWait();
     }
-
 }

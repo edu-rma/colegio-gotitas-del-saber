@@ -1,3 +1,7 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package main.java.edu.mmcoffee.colegiogotitas.repository;
 
 import javafx.collections.FXCollections;
@@ -40,8 +44,7 @@ public class EstudianteRepository {
                 + "INNER JOIN docentes AS d "
                 + "ON d.id_docente = ac.id_docente";
 
-        ObservableList<Estudiante> studentList =
-                FXCollections.observableArrayList();
+        ObservableList<Estudiante> studentList = FXCollections.observableArrayList();
 
         try (PreparedStatement pstm = DataBaseConnection
                 .getConnectionDataBase()
@@ -81,8 +84,7 @@ public class EstudianteRepository {
                 + "FROM cursos "
                 + "ORDER BY nombre_curso";
 
-        ObservableList<Curso> cursos =
-                FXCollections.observableArrayList();
+        ObservableList<Curso> cursos = FXCollections.observableArrayList();
 
         try (PreparedStatement pstm = DataBaseConnection
                 .getConnectionDataBase()
