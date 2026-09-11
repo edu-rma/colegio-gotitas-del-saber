@@ -5,49 +5,102 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
 
-<GridPane alignment="CENTER" hgap="10" prefHeight="400.0" prefWidth="600.0" stylesheets="@../css/registro-view.css" vgap="12" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.edu.mmcoffee.colegiogotitas.controller.RegistroController">
-   <padding>
-      <Insets bottom="30" left="40" right="40" top="30" />
-   </padding>
-   <columnConstraints>
-      <ColumnConstraints minWidth="120.0" prefWidth="150.0" />
-      <ColumnConstraints minWidth="200.0" prefWidth="300.0" />
-   </columnConstraints>
-   <rowConstraints>
-      <RowConstraints />
-      <RowConstraints prefHeight="30.0" />
-      <RowConstraints prefHeight="30.0" />
-      <RowConstraints prefHeight="30.0" />
-      <RowConstraints prefHeight="30.0" />
-      <RowConstraints prefHeight="30.0" />
-      <RowConstraints prefHeight="30.0" />
-      <RowConstraints prefHeight="40.0" />
-   </rowConstraints>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="680.0" prefWidth="600.0" styleClass="root" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.java.edu.mmcoffee.colegiogotitas.controller.RegistroController">
    <children>
 
-      <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Crear cuenta" GridPane.columnSpan="2" GridPane.rowIndex="1" />
+      <Circle fill="#B5CBBD" layoutX="560.0" layoutY="20.0" opacity="0.45" radius="90.0" AnchorPane.rightAnchor="-40.0" AnchorPane.topAnchor="-70.0" />
+      <Circle fill="#A17F67" layoutX="40.0" layoutY="660.0" opacity="0.30" radius="80.0" AnchorPane.bottomAnchor="-60.0" AnchorPane.leftAnchor="-40.0" />
 
-      <Label text="Nombre:" GridPane.rowIndex="2" />
-      <TextField fx:id="txtFieldNombre" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+      <VBox alignment="TOP_CENTER" prefWidth="380.0" spacing="14.0" styleClass="auth-container" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="110.0" AnchorPane.rightAnchor="110.0" AnchorPane.topAnchor="40.0">
+         <padding>
+            <Insets bottom="30.0" left="34.0" right="34.0" top="24.0" />
+         </padding>
+         <children>
 
-      <Label text="Apellido:" GridPane.rowIndex="3" />
-      <TextField fx:id="txtFieldApellido" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <ImageView fitHeight="56.0" preserveRatio="true">
+               <image>
+                 <Image url="@../images/imagen-006.png" />
+               </image>
+            </ImageView>
 
-      <Label text="Correo:" GridPane.rowIndex="4" />
-      <TextField fx:id="txtFieldEmail" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Label styleClass="auth-title" text="Crear cuenta" />
 
-      <Label text="Contraseña:" GridPane.rowIndex="5" />
-      <PasswordField fx:id="txtFieldPassword" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <VBox spacing="6.0">
+               <children>
+                  <Label styleClass="field-label" text="Nombre" />
+                  <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="field-row">
+                     <children>
+                        <Region styleClass="icon-person" />
+                        <TextField fx:id="txtFieldNombre" promptText="Ingresa tu nombre" styleClass="auth-field" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
 
-      <Label text="Confirmar contraseña:" GridPane.rowIndex="6" />
-      <PasswordField fx:id="txtFieldConfirmPassword" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <VBox spacing="6.0">
+               <children>
+                  <Label styleClass="field-label" text="Apellido" />
+                  <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="field-row">
+                     <children>
+                        <Region styleClass="icon-person" />
+                        <TextField fx:id="txtFieldApellido" promptText="Ingresa tu apellido" styleClass="auth-field" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
 
-      <Button mnemonicParsing="false" onAction="#handleGoBackToLogin" prefHeight="0.0" prefWidth="150.0" text="Volver al Login" GridPane.rowIndex="7" />
-      <Button mnemonicParsing="false" onAction="#handleRegister" prefHeight="50.0" prefWidth="152.0" text="Crear cuenta" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-   
+            <VBox spacing="6.0">
+               <children>
+                  <Label styleClass="field-label" text="Correo" />
+                  <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="field-row">
+                     <children>
+                        <Region styleClass="icon-email" />
+                        <TextField fx:id="txtFieldEmail" promptText="ejemplo@correo.com" styleClass="auth-field" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+
+            <VBox spacing="6.0">
+               <children>
+                  <Label styleClass="field-label" text="Contrasena" />
+                  <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="field-row">
+                     <children>
+                        <Region styleClass="icon-lock" />
+                        <PasswordField fx:id="txtFieldPassword" promptText="Ingresa tu contrasena" styleClass="auth-field" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+
+            <VBox spacing="6.0">
+               <children>
+                  <Label styleClass="field-label" text="Confirmar contrasena" />
+                  <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="field-row">
+                     <children>
+                        <Region styleClass="icon-lock" />
+                        <PasswordField fx:id="txtFieldConfirmPassword" promptText="Confirma tu contrasena" styleClass="auth-field" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+
+            <HBox spacing="12.0">
+               <children>
+                  <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleGoBackToLogin" styleClass="btn-secondary" text="Volver al Login" HBox.hgrow="ALWAYS" />
+                  <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleRegister" styleClass="btn-primary" text="Crear cuenta   -&gt;" HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
+
+         </children>
+      </VBox>
    </children>
-</GridPane>
+</AnchorPane>

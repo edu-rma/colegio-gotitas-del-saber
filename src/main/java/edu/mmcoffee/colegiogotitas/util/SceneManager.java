@@ -48,7 +48,7 @@ public class SceneManager {
         });
 
         Parent root = loader.load();
-        Scene scene = new Scene(root, 600, 600);
+        Scene scene = new Scene(root, 600, 640);
         primaryStage.setScene(scene);
         primaryStage.centerOnScreen();
         primaryStage.show();
@@ -78,7 +78,7 @@ public class SceneManager {
         });
 
         Parent root = loader.load();
-        Scene scene = new Scene(root, 600, 600);
+        Scene scene = new Scene(root, 600, 720);
         primaryStage.setScene(scene);
         primaryStage.centerOnScreen();
         primaryStage.show();
@@ -112,7 +112,7 @@ public class SceneManager {
          * Se mantiene 950 x 600 porque el Dashboard necesita
          * espacio para mostrar la tabla y las operaciones del CRUD.
          */
-        Scene scene = new Scene(root, 950, 600);
+        Scene scene = new Scene(root, 1000, 650);
         primaryStage.setScene(scene);
         primaryStage.centerOnScreen();
         primaryStage.show();

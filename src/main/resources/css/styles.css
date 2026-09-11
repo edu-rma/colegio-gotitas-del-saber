@@ -1,0 +1,201 @@
+/* =========================================================
+   COLEGIO GOTITAS DEL SABER — hoja de estilos UNICA
+   (login-view.fxml + registro-view.fxml + dashboard-view.fxml)
+   Paleta tomada del logo: verde salvia + cafe tierra
+   ========================================================= */
+
+.root {
+    -brand-green: #B5CBBD;
+    -brand-brown: #A17F67;
+    -brand-green-dark: #7C9885;
+    -brand-brown-dark: #8A694F;
+    -header-dark: #4C5D53;
+    -text-dark: #3B3A36;
+    -text-muted: #7A7568;
+    -fx-background-color: #EFF2ED;
+    -fx-font-family: "Segoe UI";
+}
+
+/* =========================================================
+   Tarjeta comun (login y registro)
+   ========================================================= */
+.auth-container {
+    -fx-background-color: #FBFAF6;
+    -fx-background-radius: 22px;
+    -fx-border-radius: 22px;
+    -fx-border-color: derive(-brand-green, 40%);
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(60,60,45,0.18), 28, 0.2, 0, 10);
+}
+
+.brand-title {
+    -fx-text-fill: -text-dark;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+.brand-subtitle {
+    -fx-text-fill: -text-muted;
+    -fx-font-size: 8px;
+    -fx-font-weight: bold;
+}
+.auth-title {
+    -fx-text-fill: -text-dark;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+.field-label {
+    -fx-text-fill: -text-dark;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.field-row {
+    -fx-background-color: #F3F1E9;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-border-color: transparent;
+    -fx-padding: 8px 14px;
+}
+.field-row:focused-within {
+    -fx-border-color: -brand-brown;
+}
+
+.icon-email {
+    -fx-min-width: 16px; -fx-min-height: 16px;
+    -fx-max-width: 16px; -fx-max-height: 16px;
+    -fx-shape: "M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z";
+    -fx-background-color: -brand-brown;
+}
+.icon-lock {
+    -fx-min-width: 16px; -fx-min-height: 16px;
+    -fx-max-width: 16px; -fx-max-height: 16px;
+    -fx-shape: "M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6zm3 10.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z";
+    -fx-background-color: -brand-brown;
+}
+.icon-person {
+    -fx-min-width: 16px; -fx-min-height: 16px;
+    -fx-max-width: 16px; -fx-max-height: 16px;
+    -fx-shape: "M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z";
+    -fx-background-color: -brand-brown;
+}
+
+.auth-field {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 4px 0;
+    -fx-font-size: 13px;
+    -fx-text-fill: -text-dark;
+}
+.auth-field:focused {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.login-checkbox {
+    -fx-text-fill: -text-muted;
+    -fx-font-size: 12px;
+}
+.login-hyperlink {
+    -fx-text-fill: -brand-brown;
+    -fx-font-size: 12px;
+    -fx-border-color: transparent;
+}
+.login-hyperlink:hover {
+    -fx-text-fill: -brand-brown-dark;
+    -fx-underline: true;
+}
+
+.btn-primary {
+    -fx-background-color: -brand-brown;
+    -fx-text-fill: white;
+    -fx-background-radius: 12px;
+    -fx-padding: 12px;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+.btn-primary:hover { -fx-background-color: -brand-brown-dark; }
+.btn-primary:pressed { -fx-background-color: derive(-brand-brown, -20%); }
+
+.btn-secondary {
+    -fx-background-color: transparent;
+    -fx-text-fill: -brand-brown;
+    -fx-border-color: -brand-brown;
+    -fx-border-width: 1.5px;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+    -fx-padding: 11px;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+.btn-secondary:hover { -fx-background-color: derive(-brand-green, 60%); }
+
+.btn-danger {
+    -fx-background-color: #b5615a;
+    -fx-text-fill: white;
+    -fx-background-radius: 10px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-padding: 9px 18px;
+}
+.btn-danger:hover { -fx-background-color: #96473f; }
+
+/* =========================================================
+   Dashboard (estilo tomado de horizonte_urbano / PropiedadesView)
+   ========================================================= */
+.modulo-pane {
+    -fx-background-color: #EFF2ED;
+}
+.modulo-header {
+    -fx-border-color: transparent transparent -brand-brown transparent;
+    -fx-border-width: 0 0 3 0;
+    -fx-padding: 0 0 10 0;
+}
+.modulo-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -header-dark;
+}
+.modulo-subtitle {
+    -fx-font-size: 12px;
+    -fx-text-fill: -text-muted;
+}
+
+.table-card {
+    -fx-background-color: white;
+    -fx-background-radius: 14px;
+    -fx-padding: 16px;
+    -fx-effect: dropshadow(gaussian, rgba(60,60,45,0.14), 18, 0.1, 0, 4);
+}
+.table-card-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -header-dark;
+}
+
+.table-view {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+.table-view .column-header-background {
+    -fx-background-color: -header-dark;
+    -fx-background-radius: 8px 8px 0 0;
+}
+.table-view .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+}
+.table-view .table-row-cell {
+    -fx-background-color: white;
+    -fx-border-color: transparent transparent #e5e0d3 transparent;
+}
+.table-view .table-row-cell:odd {
+    -fx-background-color: #F7F5EE;
+}
+.table-view .table-row-cell:selected {
+    -fx-background-color: derive(-brand-green, 55%);
+    -fx-text-fill: -text-dark;
+}
