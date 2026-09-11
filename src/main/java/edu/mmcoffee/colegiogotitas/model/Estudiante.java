@@ -9,7 +9,7 @@ package main.java.edu.mmcoffee.colegiogotitas.model;
  * @author informatica
  */
 public class Estudiante {
-    private String idEstudainte;
+    private String idEstudiante;
     private String nombre;
     private String apellido;
     private String correoElectronico;
@@ -19,7 +19,7 @@ public class Estudiante {
     private String apellidoDocente;
  
     public Estudiante(String idEstudainte, String nombre, String apellido, String correoElectronico, String nombreSeccion, String nombreCurso, String nombreDocente, String apellidoDocente) {
-        this.idEstudainte = idEstudainte;
+        this.idEstudiante = idEstudainte;
         this.nombre = nombre;
         this.apellido = apellido;
         this.correoElectronico = correoElectronico;
@@ -29,12 +29,12 @@ public class Estudiante {
         this.apellidoDocente = apellidoDocente;
     }
  
-    public String getIdEstudainte() {
-        return idEstudainte;
+    public String getIdEstudiante() {
+        return idEstudiante;
     }
  
-    public void setIdEstudainte(String idEstudainte) {
-        this.idEstudainte = idEstudainte;
+    public void setIdEstudiante(String idEstudiante) {
+        this.idEstudiante = idEstudiante;
     }
  
     public String getNombre() {

@@ -4,6 +4,7 @@
  */
 package main.java.edu.mmcoffee.colegiogotitas.controller;
 
+import javafx.event.ActionEvent;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -66,6 +67,12 @@ public class DashboardController implements Initializable {
     private Button btactualizar;
     @FXML
     private Button Btborrar;
+    @FXML
+    private Button btnCerrarSesion;
+    @FXML
+    private TextField txtBuscarNombre;
+    @FXML
+    private Button btnBuscar;
 
     public DashboardController(DashboardService dashboardService, SceneManager sceneManager) {
         this.dashboardService = dashboardService;
@@ -128,7 +135,7 @@ public class DashboardController implements Initializable {
 
         resultado.ifPresent(datos -> {
             try {
-                dashboardService.actualizarEstudiante(seleccionado.getIdEstudainte(), datos[0], datos[1], datos[2]);
+                dashboardService.actualizarEstudiante(seleccionado.getIdEstudiante(), datos[0], datos[1], datos[2]);
                 handleLoadTablestuden();
             } catch (Exception e) {
                 sceneManager.showInfoAlert("Error", "No se pudo actualizar",
@@ -168,7 +175,7 @@ public class DashboardController implements Initializable {
         confirmacion.showAndWait().ifPresent(boton -> {
             if (boton == ButtonType.OK) {
                 try {
-                    dashboardService.eliminarEstudiante(seleccionado.getIdEstudainte());
+                    dashboardService.eliminarEstudiante(seleccionado.getIdEstudiante());
                     handleLoadTablestuden();
                 } catch (Exception e) {
                     sceneManager.showInfoAlert("Error", "No se pudo eliminar",
@@ -258,4 +265,35 @@ public class DashboardController implements Initializable {
 
         return dialog.showAndWait();
     }
+
+
+    @FXML
+    private void handleCerrarSesion(ActionEvent event) {
+        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacion.setTitle("Cerrar Sesión");
+        confirmacion.setHeaderText(null);
+        confirmacion.setContentText("¿Está seguro que desea cerrar sesión?");
+
+        Optional<ButtonType> resultado = confirmacion.showAndWait();
+        if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
+            try {
+                sceneManager.showLoginView();
+            } catch (Exception e) {
+                sceneManager.showInfoAlert("Error", "No se pudo cerrar sesión",
+                        e.getMessage(), Alert.AlertType.ERROR);
+            }
+        }
+    }
+    
+    @FXML
+private void handleBuscar() {
+    String textoBusqueda = txtBuscarNombre.getText();
+    try {
+        tvEstudiante.setItems(dashboardService.buscarPorNombre(textoBusqueda));
+    } catch (Exception e) {
+        tvEstudiante.getItems().clear();
+        sceneManager.showInfoAlert("Sin resultados", "Búsqueda sin coincidencias",
+                e.getMessage(), Alert.AlertType.WARNING);
+    }
+}
 }

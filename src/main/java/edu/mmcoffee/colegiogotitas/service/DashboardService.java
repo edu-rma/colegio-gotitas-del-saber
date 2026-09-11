@@ -28,6 +28,29 @@ public class DashboardService {
     }
 
     // ==========================================================
+// BUSCAR ESTUDIANTES POR NOMBRE
+// ==========================================================
+
+/**
+ * Busca estudiantes cuyo nombre o apellido coincidan con el
+ * texto recibido. Si el texto viene vacío, se devuelve el
+ * listado completo (equivale a "limpiar" la búsqueda).
+ */
+public ObservableList<Estudiante> buscarPorNombre(String nombre) throws Exception {
+
+    if (nombre == null || nombre.trim().isEmpty()) {
+        return listStudent();
+    }
+
+    ObservableList<Estudiante> estudiantes = estudianteRepository.findByNombre(nombre);
+
+    if (estudiantes == null || estudiantes.isEmpty()) {
+        throw new RuntimeException("No se encontraron estudiantes con ese nombre.");
+    }
+
+    return estudiantes;
+}
+    // ==========================================================
     // LISTAR CURSOS
     // ==========================================================
 
@@ -38,6 +61,9 @@ public class DashboardService {
     public ObservableList<Curso> listCursos() throws Exception {
         return estudianteRepository.findAllCursos();
     }
+    
+    
+    
 
     // ==========================================================
     // CREAR ESTUDIANTE

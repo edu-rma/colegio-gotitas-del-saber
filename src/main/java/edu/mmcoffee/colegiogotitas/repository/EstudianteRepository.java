@@ -75,6 +75,72 @@ public class EstudianteRepository {
         return studentList;
     }
 
+    
+    /**
+ * Busca estudiantes cuyo nombre o apellido coincidan
+ * (parcialmente) con el texto recibido.
+ */
+public ObservableList<Estudiante> findByNombre(String nombre) throws Exception {
+
+    String sql = "SELECT "
+            + "e.id_estudiante, "
+            + "e.nombre AS nombre_estudiante, "
+            + "e.apellido AS apellido_estudiante, "
+            + "e.correo_electronico, "
+            + "s.nombre_seccion, "
+            + "c.nombre_curso, "
+            + "d.nombre AS nombre_docente, "
+            + "d.apellido AS apellido_docente "
+            + "FROM estudiantes AS e "
+            + "INNER JOIN matriculas AS m "
+            + "ON m.id_estudiante = e.id_estudiante "
+            + "INNER JOIN asignacion_cursos AS ac "
+            + "ON ac.id_matricula = m.id_matricula "
+            + "INNER JOIN secciones AS s "
+            + "ON s.id_seccion = ac.id_seccion "
+            + "INNER JOIN cursos AS c "
+            + "ON c.id_curso = ac.id_curso "
+            + "INNER JOIN docentes AS d "
+            + "ON d.id_docente = ac.id_docente "
+            + "WHERE e.nombre LIKE ? "
+            + "OR e.apellido LIKE ?";
+
+    ObservableList<Estudiante> studentList = FXCollections.observableArrayList();
+
+    try (PreparedStatement pstm = DataBaseConnection
+            .getConnectionDataBase()
+            .prepareStatement(sql)) {
+
+        String filtro = "%" + nombre.trim() + "%";
+        pstm.setString(1, filtro);
+        pstm.setString(2, filtro);
+
+        try (ResultSet rs = pstm.executeQuery()) {
+
+            while (rs.next()) {
+
+                studentList.add(new Estudiante(
+                        rs.getString("id_estudiante"),
+                        rs.getString("nombre_estudiante"),
+                        rs.getString("apellido_estudiante"),
+                        rs.getString("correo_electronico"),
+                        rs.getString("nombre_seccion"),
+                        rs.getString("nombre_curso"),
+                        rs.getString("nombre_docente"),
+                        rs.getString("apellido_docente")
+                ));
+            }
+        }
+
+    } catch (SQLException e) {
+
+        throw new RuntimeException(
+                "Error al buscar estudiantes por nombre: "
+                + e.getMessage(), e);
+    }
+
+    return studentList;
+}
     /**
      * Obtiene todos los cursos disponibles.
      */
@@ -205,7 +271,7 @@ public class EstudianteRepository {
 
             pstm.executeUpdate();
 
-            estudiante.setIdEstudainte(nuevoId);
+            estudiante.setIdEstudiante(nuevoId);
 
         } catch (SQLException e) {
 
@@ -456,7 +522,7 @@ public class EstudianteRepository {
 
             conn.commit();
 
-            estudiante.setIdEstudainte(
+            estudiante.setIdEstudiante(
                     nuevoIdEstudiante);
 
         } catch (Exception e) {
@@ -513,7 +579,7 @@ public class EstudianteRepository {
 
             pstm.setString(
                     4,
-                    estudiante.getIdEstudainte());
+                    estudiante.getIdEstudiante());
 
             pstm.executeUpdate();
 
