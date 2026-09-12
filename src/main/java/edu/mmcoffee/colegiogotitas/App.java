@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 import main.java.edu.mmcoffee.colegiogotitas.config.DataBaseConnection;
 import main.java.edu.mmcoffee.colegiogotitas.util.SceneManager;
+import java.sql.Connection;
 import java.sql.SQLException;
 
 public class App extends Application {
@@ -11,21 +12,28 @@ public class App extends Application {
     private Stage primaryStage;
 
     @Override
-    public void start(Stage primaryStage)throws Exception {
+    public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
-        SceneManager sceneManager = new SceneManager(primaryStage);
-        sceneManager.showLoginView();
-        primaryStage.show();
-    }
 
-  public static void main(String[] args) throws Exception {
-        launch();
-        try{
+        // Validar la conexión a la base de datos al arrancar
+        try {
             DataBaseConnection.getConnectionDataBase();
-            System.out.println("CONECTADO!");
-        }catch(SQLException e){
-            System.out.println("ERROR EN LA CONEXION");
+            System.out.println("CONECTADO A LA BASE DE DATOS!");
+        } catch (Exception e) { // Cambiado a Exception para coincidir con DataBaseConnection
+            System.err.println("ERROR EN LA CONEXION: " + e.getMessage());
+        }
+
+        try {
+            SceneManager sceneManager = new SceneManager(primaryStage);
+            sceneManager.showLoginView();
+            primaryStage.setTitle("Colegio Gotitas del Saber");
+            primaryStage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
- 
+
+    public static void main(String[] args) {
+        launch(args);
+    }
 }

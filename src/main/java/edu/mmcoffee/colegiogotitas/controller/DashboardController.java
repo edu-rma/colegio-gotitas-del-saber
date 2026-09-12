@@ -4,6 +4,7 @@
  */
 package main.java.edu.mmcoffee.colegiogotitas.controller;
 
+import javafx.event.ActionEvent;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -28,7 +29,7 @@ import main.java.edu.mmcoffee.colegiogotitas.model.Curso;
 import main.java.edu.mmcoffee.colegiogotitas.model.Estudiante;
 import main.java.edu.mmcoffee.colegiogotitas.service.DashboardService;
 import main.java.edu.mmcoffee.colegiogotitas.util.SceneManager;
-
+import main.java.edu.mmcoffee.colegiogotitas.model.Calificacion;
 /**
  * FXML Controller class
  *
@@ -57,7 +58,10 @@ public class DashboardController implements Initializable {
     private TableColumn<Estudiante, String> dbnombredcolumn;
     @FXML
     private TableColumn<Estudiante, String> dbapellidodcolumn;
-
+    @FXML 
+    private Button btnAgregarNotas;
+    @FXML
+    private Button btnVerNotasEstudiante;
     @FXML
     private Button btregistrar;
     @FXML
@@ -66,15 +70,18 @@ public class DashboardController implements Initializable {
     private Button btactualizar;
     @FXML
     private Button Btborrar;
+    @FXML
+    private Button btnCerrarSesion;
+    @FXML
+    private TextField txtBuscarNombre;
+    @FXML
+    private Button btnBuscar;
 
     public DashboardController(DashboardService dashboardService, SceneManager sceneManager) {
         this.dashboardService = dashboardService;
         this.sceneManager = sceneManager;
     }
 
-    /**
-     * Initializes the controller class.
-     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
@@ -102,7 +109,6 @@ public class DashboardController implements Initializable {
         Optional<String[]> resultado = mostrarDialogoEstudiante("Nuevo estudiante", null, null, null, true);
         resultado.ifPresent(datos -> {
             try {
-                // datos = [nombre, apellido, correo, idCurso]
                 dashboardService.crearEstudiante(datos[0], datos[1], datos[2], datos[3]);
                 handleLoadTablestuden();
             } catch (Exception e) {
@@ -122,13 +128,12 @@ public class DashboardController implements Initializable {
             return;
         }
 
-        // En edición no se pide curso (solo se editan sus datos básicos).
         Optional<String[]> resultado = mostrarDialogoEstudiante("Editar estudiante",
                 seleccionado.getNombre(), seleccionado.getApellido(), seleccionado.getCorreoElectronico(), false);
 
         resultado.ifPresent(datos -> {
             try {
-                dashboardService.actualizarEstudiante(seleccionado.getIdEstudainte(), datos[0], datos[1], datos[2]);
+                dashboardService.actualizarEstudiante(seleccionado.getIdEstudiante(), datos[0], datos[1], datos[2]);
                 handleLoadTablestuden();
             } catch (Exception e) {
                 sceneManager.showInfoAlert("Error", "No se pudo actualizar",
@@ -139,8 +144,6 @@ public class DashboardController implements Initializable {
 
     @FXML
     private void handleActualizar() {
-        // Simula el "refrescar" de un navegador: vuelve a consultar la base
-        // de datos desde cero y repinta toda la tabla con lo que haya ahora.
         try {
             handleLoadTablestuden();
         } catch (Exception e) {
@@ -168,7 +171,7 @@ public class DashboardController implements Initializable {
         confirmacion.showAndWait().ifPresent(boton -> {
             if (boton == ButtonType.OK) {
                 try {
-                    dashboardService.eliminarEstudiante(seleccionado.getIdEstudainte());
+                    dashboardService.eliminarEstudiante(seleccionado.getIdEstudiante());
                     handleLoadTablestuden();
                 } catch (Exception e) {
                     sceneManager.showInfoAlert("Error", "No se pudo eliminar",
@@ -178,15 +181,119 @@ public class DashboardController implements Initializable {
         });
     }
 
-    /**
-     * Diálogo reutilizable para capturar nombre, apellido, correo y
-     * (solo cuando mostrarCurso es true) el curso al que se matriculará
-     * el estudiante.
-     *
-     * Devuelve un arreglo [nombre, apellido, correo, idCurso] si se
-     * confirma (idCurso viene null cuando mostrarCurso es false),
-     * o vacío si se cancela.
-     */
+    @FXML
+    private void handleAgregarNotas() {
+        Estudiante seleccionado = tvEstudiante.getSelectionModel().getSelectedItem();
+        if (seleccionado == null) {
+            sceneManager.showInfoAlert("Sin selección", "Selecciona un estudiante",
+                    "Debes seleccionar un estudiante de la tabla para agregar notas.",
+                    Alert.AlertType.WARNING);
+            return;
+        }
+
+        Dialog<double[]> dialog = new Dialog<>();
+        dialog.setTitle("Agregar Calificación");
+        dialog.setHeaderText("Estudiante: " + seleccionado.getNombre() + " " + seleccionado.getApellido());
+        
+        java.net.URL cssUrlAgregar = getClass().getResource("main/resources/css/styles.css");
+         if (cssUrlAgregar != null) {
+    dialog.getDialogPane().getStylesheets().add(cssUrlAgregar.toExternalForm());
+          }
+         
+        dialog.getDialogPane().getStyleClass().add("custom-dialog");
+
+        ButtonType btnGuardar = new ButtonType("Guardar", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(btnGuardar, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 10, 10, 10));
+
+        TextField txtNota = new TextField();
+        txtNota.setPromptText("Ej. 85.5");
+        TextField txtDescripcion = new TextField();
+        txtDescripcion.setPromptText("Ej. Examen Parcial");
+
+        grid.add(new Label("Nota (0-100):"), 0, 0);
+        grid.add(txtNota, 1, 0);
+        grid.add(new Label("Descripción:"), 0, 1);
+        grid.add(txtDescripcion, 1, 1);
+
+        dialog.getDialogPane().setContent(grid);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == btnGuardar) {
+                try {
+                    double nota = Double.parseDouble(txtNota.getText().trim());
+                    String idEst = seleccionado.getIdEstudiante();
+                    
+                    dashboardService.registrarCalificacion(idEst, "DOC001", "CUR001", nota, txtDescripcion.getText().trim());
+                    
+                    sceneManager.showInfoAlert("Éxito", "Calificación Guardada",
+                            "La nota se registró correctamente.", Alert.AlertType.INFORMATION);
+                } catch (NumberFormatException e) {
+                    sceneManager.showInfoAlert("Error", "Nota inválida",
+                            "Debe ingresar un valor numérico para la nota.", Alert.AlertType.ERROR);
+                } catch (Exception e) {
+                    sceneManager.showInfoAlert("Error", "No se pudo guardar la nota",
+                            e.getMessage(), Alert.AlertType.ERROR);
+                }
+            }
+            return null;
+        });
+
+        dialog.showAndWait();
+    }
+
+    @FXML
+    private void handleVerNotas() {
+        Estudiante seleccionado = tvEstudiante.getSelectionModel().getSelectedItem();
+        if (seleccionado == null) {
+            sceneManager.showInfoAlert("Sin selección", "Selecciona un estudiante",
+                    "Debes seleccionar un estudiante de la tabla para ver sus notas.",
+                    Alert.AlertType.WARNING);
+            return;
+        }
+
+        try {
+            String idEst = seleccionado.getIdEstudiante();
+            
+            ObservableList<Calificacion> notas = dashboardService.obtenerCalificacionesEstudiante(idEst);
+
+            Dialog<Void> dialog = new Dialog<>();
+            dialog.setTitle("Notas del Estudiante");
+            dialog.setHeaderText("Historial de Notas: " + seleccionado.getNombre() + " " + seleccionado.getApellido());
+            
+            java.net.URL cssUrl = getClass().getResource("main/resources/css/styles.css");
+            if (cssUrl != null) {
+                dialog.getDialogPane().getStylesheets().add(cssUrl.toExternalForm());
+            }
+            
+            dialog.getDialogPane().getStyleClass().add("custom-dialog");
+            
+            dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+
+            TableView<Calificacion> tvNotas = new TableView<>();
+            TableColumn<Calificacion, Double> colNota = new TableColumn<>("Nota");
+            colNota.setCellValueFactory(new PropertyValueFactory<>("nota"));
+
+            TableColumn<Calificacion, String> colDesc = new TableColumn<>("Descripción");
+            colDesc.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
+
+            tvNotas.getColumns().addAll(colNota, colDesc);
+            tvNotas.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+            tvNotas.setItems(notas);
+
+            dialog.getDialogPane().setContent(tvNotas);
+            dialog.showAndWait();
+
+        } catch (Exception e) {
+            sceneManager.showInfoAlert("Información", "Sin registro",
+                    e.getMessage(), Alert.AlertType.INFORMATION);
+        }
+    }
+
     private Optional<String[]> mostrarDialogoEstudiante(String titulo, String nombreInicial,
             String apellidoInicial, String correoInicial, boolean mostrarCurso) {
 
@@ -196,6 +303,10 @@ public class DashboardController implements Initializable {
 
         ButtonType btnGuardar = new ButtonType("Guardar", ButtonBar.ButtonData.OK_DONE);
         DialogPane pane = dialog.getDialogPane();
+        
+        pane.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
+        pane.getStyleClass().add("custom-dialog");
+        
         pane.getButtonTypes().addAll(btnGuardar, ButtonType.CANCEL);
 
         TextField txtNombre = new TextField(nombreInicial == null ? "" : nombreInicial);
@@ -231,7 +342,6 @@ public class DashboardController implements Initializable {
 
         pane.setContent(grid);
 
-        // El botón "Guardar" se deshabilita si faltan datos obligatorios
         javafx.scene.Node btnGuardarNode = pane.lookupButton(btnGuardar);
         Runnable validar = () -> {
             boolean camposLlenos = !txtNombre.getText().trim().isEmpty()
@@ -257,5 +367,35 @@ public class DashboardController implements Initializable {
         });
 
         return dialog.showAndWait();
+    }
+
+    @FXML
+    private void handleCerrarSesion(ActionEvent event) {
+        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacion.setTitle("Cerrar Sesión");
+        confirmacion.setHeaderText(null);
+        confirmacion.setContentText("¿Está seguro que desea cerrar sesión?");
+
+        Optional<ButtonType> resultado = confirmacion.showAndWait();
+        if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
+            try {
+                sceneManager.showLoginView();
+            } catch (Exception e) {
+                sceneManager.showInfoAlert("Error", "No se pudo cerrar sesión",
+                        e.getMessage(), Alert.AlertType.ERROR);
+            }
+        }
+    }
+
+    @FXML
+    private void handleBuscar() {
+        String textoBusqueda = txtBuscarNombre.getText();
+        try {
+            tvEstudiante.setItems(dashboardService.buscarPorNombre(textoBusqueda));
+        } catch (Exception e) {
+            tvEstudiante.getItems().clear();
+            sceneManager.showInfoAlert("Sin resultados", "Búsqueda sin coincidencias",
+                    e.getMessage(), Alert.AlertType.WARNING);
+        }
     }
 }

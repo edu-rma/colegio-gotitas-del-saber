@@ -6,22 +6,22 @@ package main.java.edu.mmcoffee.colegiogotitas.repository;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
+import main.java.edu.mmcoffee.colegiogotitas.config.DataBaseConnection;
+import main.java.edu.mmcoffee.colegiogotitas.model.Curso;
+import main.java.edu.mmcoffee.colegiogotitas.model.Estudiante;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import main.java.edu.mmcoffee.colegiogotitas.config.DataBaseConnection;
-import main.java.edu.mmcoffee.colegiogotitas.model.Curso;
-import main.java.edu.mmcoffee.colegiogotitas.model.Estudiante;
+import java.time.LocalDate;
+import main.java.edu.mmcoffee.colegiogotitas.model.Calificacion;
 
 public class EstudianteRepository {
 
     /**
      * Obtiene todos los estudiantes que tienen curso asignado.
      */
-    public ObservableList<Estudiante> findAll() throws Exception {
+  public ObservableList<Estudiante> findAll() throws Exception {
 
         String sql = "SELECT "
                 + "e.id_estudiante, "
@@ -76,6 +76,71 @@ public class EstudianteRepository {
     }
 
     /**
+     * Busca estudiantes cuyo nombre o apellido coincidan parcialmente.
+     */
+    public ObservableList<Estudiante> findByNombre(String nombre) throws Exception {
+
+        String sql = "SELECT "
+                + "e.id_estudiante, "
+                + "e.nombre AS nombre_estudiante, "
+                + "e.apellido AS apellido_estudiante, "
+                + "e.correo_electronico, "
+                + "s.nombre_seccion, "
+                + "c.nombre_curso, "
+                + "d.nombre AS nombre_docente, "
+                + "d.apellido AS apellido_docente "
+                + "FROM estudiantes AS e "
+                + "INNER JOIN matriculas AS m "
+                + "ON m.id_estudiante = e.id_estudiante "
+                + "INNER JOIN asignacion_cursos AS ac "
+                + "ON ac.id_matricula = m.id_matricula "
+                + "INNER JOIN secciones AS s "
+                + "ON s.id_seccion = ac.id_seccion "
+                + "INNER JOIN cursos AS c "
+                + "ON c.id_curso = ac.id_curso "
+                + "INNER JOIN docentes AS d "
+                + "ON d.id_docente = ac.id_docente "
+                + "WHERE e.nombre LIKE ? "
+                + "OR e.apellido LIKE ?";
+
+        ObservableList<Estudiante> studentList = FXCollections.observableArrayList();
+
+        try (PreparedStatement pstm = DataBaseConnection
+                .getConnectionDataBase()
+                .prepareStatement(sql)) {
+
+            String filtro = "%" + nombre.trim() + "%";
+            pstm.setString(1, filtro);
+            pstm.setString(2, filtro);
+
+            try (ResultSet rs = pstm.executeQuery()) {
+
+                while (rs.next()) {
+
+                    studentList.add(new Estudiante(
+                            rs.getString("id_estudiante"),
+                            rs.getString("nombre_estudiante"),
+                            rs.getString("apellido_estudiante"),
+                            rs.getString("correo_electronico"),
+                            rs.getString("nombre_seccion"),
+                            rs.getString("nombre_curso"),
+                            rs.getString("nombre_docente"),
+                            rs.getString("apellido_docente")
+                    ));
+                }
+            }
+
+        } catch (SQLException e) {
+
+            throw new RuntimeException(
+                    "Error al buscar estudiantes por nombre: "
+                    + e.getMessage(), e);
+        }
+
+        return studentList;
+    }
+
+    /**
      * Obtiene todos los cursos disponibles.
      */
     public ObservableList<Curso> findAllCursos() throws Exception {
@@ -111,12 +176,6 @@ public class EstudianteRepository {
 
     /**
      * Genera automáticamente un nuevo ID.
-     *
-     * Ejemplos:
-     * EST001
-     * SEC001
-     * MAT001
-     * ASG001
      */
     private String generarNuevoId(
             Connection conn,
@@ -166,9 +225,7 @@ public class EstudianteRepository {
     }
 
     /**
-     * CRUD - INSERTAR
-     *
-     * Inserta únicamente un estudiante.
+     * Inserta un estudiante.
      */
     public void insertar(Estudiante estudiante) {
 
@@ -205,7 +262,7 @@ public class EstudianteRepository {
 
             pstm.executeUpdate();
 
-            estudiante.setIdEstudainte(nuevoId);
+            estudiante.setIdEstudiante(nuevoId);
 
         } catch (SQLException e) {
 
@@ -216,22 +273,9 @@ public class EstudianteRepository {
     }
 
     /**
-     * INSERTAR + MATRÍCULA + ASIGNACIÓN
-     *
-     * Registra un estudiante y automáticamente:
-     *
-     * 1. Crea el estudiante.
-     * 2. Busca una sección del curso.
-     * 3. Si no existe, crea una sección.
-     * 4. Crea la matrícula.
-     * 5. Busca un docente.
-     * 6. Crea la asignación del curso.
-     *
-     * Todo se realiza dentro de una sola transacción.
+     * Registra un estudiante y lo asigna a un curso dentro de una transacción.
      */
-    public void registrarConCurso(
-            Estudiante estudiante,
-            String idCurso) {
+    public void registrarConCurso(Estudiante estudiante, String idCurso) {
 
         Connection conn;
 
@@ -250,10 +294,7 @@ public class EstudianteRepository {
 
             conn.setAutoCommit(false);
 
-            // ==========================================
             // 1. CREAR ESTUDIANTE
-            // ==========================================
-
             String nuevoIdEstudiante = generarNuevoId(
                     conn,
                     "estudiantes",
@@ -263,26 +304,20 @@ public class EstudianteRepository {
 
             String sqlEstudiante =
                     "INSERT INTO estudiantes "
-                    + "(id_estudiante, nombre, apellido, "
-                    + "correo_electronico) "
+                    + "(id_estudiante, nombre, apellido, correo_electronico) "
                     + "VALUES (?, ?, ?, ?)";
 
-            try (PreparedStatement pstm =
-                    conn.prepareStatement(sqlEstudiante)) {
+            try (PreparedStatement pstm = conn.prepareStatement(sqlEstudiante)) {
 
                 pstm.setString(1, nuevoIdEstudiante);
                 pstm.setString(2, estudiante.getNombre());
                 pstm.setString(3, estudiante.getApellido());
-                pstm.setString(4,
-                        estudiante.getCorreoElectronico());
+                pstm.setString(4, estudiante.getCorreoElectronico());
 
                 pstm.executeUpdate();
             }
 
-            // ==========================================
             // 2. BUSCAR SECCIÓN DEL CURSO
-            // ==========================================
-
             String idSeccion = null;
 
             String sqlBuscarSeccion =
@@ -291,24 +326,19 @@ public class EstudianteRepository {
                     + "WHERE id_curso = ? "
                     + "LIMIT 1";
 
-            try (PreparedStatement pstm =
-                    conn.prepareStatement(sqlBuscarSeccion)) {
+            try (PreparedStatement pstm = conn.prepareStatement(sqlBuscarSeccion)) {
 
                 pstm.setString(1, idCurso);
 
                 try (ResultSet rs = pstm.executeQuery()) {
 
                     if (rs.next()) {
-
                         idSeccion = rs.getString("id_seccion");
                     }
                 }
             }
 
-            // ==========================================
             // 3. CREAR SECCIÓN SI NO EXISTE
-            // ==========================================
-
             if (idSeccion == null) {
 
                 idSeccion = generarNuevoId(
@@ -318,16 +348,14 @@ public class EstudianteRepository {
                         "SEC",
                         3);
 
-                String nombreSeccionNueva =
-                        "Sección " + idSeccion;
+                String nombreSeccionNueva = "Sección " + idSeccion;
 
                 String sqlSeccion =
                         "INSERT INTO secciones "
                         + "(id_seccion, id_curso, nombre_seccion) "
                         + "VALUES (?, ?, ?)";
 
-                try (PreparedStatement pstm =
-                        conn.prepareStatement(sqlSeccion)) {
+                try (PreparedStatement pstm = conn.prepareStatement(sqlSeccion)) {
 
                     pstm.setString(1, idSeccion);
                     pstm.setString(2, idCurso);
@@ -337,10 +365,7 @@ public class EstudianteRepository {
                 }
             }
 
-            // ==========================================
             // 4. CREAR MATRÍCULA
-            // ==========================================
-
             String nuevoIdMatricula = generarNuevoId(
                     conn,
                     "matriculas",
@@ -353,8 +378,7 @@ public class EstudianteRepository {
                     + "(id_matricula, id_seccion, id_estudiante) "
                     + "VALUES (?, ?, ?)";
 
-            try (PreparedStatement pstm =
-                    conn.prepareStatement(sqlMatricula)) {
+            try (PreparedStatement pstm = conn.prepareStatement(sqlMatricula)) {
 
                 pstm.setString(1, nuevoIdMatricula);
                 pstm.setString(2, idSeccion);
@@ -363,10 +387,7 @@ public class EstudianteRepository {
                 pstm.executeUpdate();
             }
 
-            // ==========================================
             // 5. BUSCAR DOCENTE
-            // ==========================================
-
             String idDocente = null;
 
             String sqlBuscarDocente =
@@ -375,24 +396,17 @@ public class EstudianteRepository {
                     + "WHERE id_curso = ? "
                     + "LIMIT 1";
 
-            try (PreparedStatement pstm =
-                    conn.prepareStatement(sqlBuscarDocente)) {
+            try (PreparedStatement pstm = conn.prepareStatement(sqlBuscarDocente)) {
 
                 pstm.setString(1, idCurso);
 
-                try (ResultSet rs =
-                        pstm.executeQuery()) {
+                try (ResultSet rs = pstm.executeQuery()) {
 
                     if (rs.next()) {
-
-                        idDocente =
-                                rs.getString("id_docente");
+                        idDocente = rs.getString("id_docente");
                     }
                 }
             }
-
-            // Si no existe docente para ese curso,
-            // tomar el primer docente disponible.
 
             if (idDocente == null) {
 
@@ -401,30 +415,21 @@ public class EstudianteRepository {
                         + "FROM docentes "
                         + "LIMIT 1";
 
-                try (PreparedStatement pstm =
-                        conn.prepareStatement(sqlDocente);
-                     ResultSet rs =
-                        pstm.executeQuery()) {
+                try (PreparedStatement pstm = conn.prepareStatement(sqlDocente);
+                     ResultSet rs = pstm.executeQuery()) {
 
                     if (rs.next()) {
-
-                        idDocente =
-                                rs.getString("id_docente");
+                        idDocente = rs.getString("id_docente");
                     }
                 }
             }
 
             if (idDocente == null) {
-
                 throw new RuntimeException(
-                        "No hay ningún docente registrado "
-                        + "para asignar al curso.");
+                        "No hay ningún docente registrado para asignar al curso.");
             }
 
-            // ==========================================
             // 6. CREAR ASIGNACIÓN DEL CURSO
-            // ==========================================
-
             String nuevoIdAsignacion = generarNuevoId(
                     conn,
                     "asignacion_cursos",
@@ -434,12 +439,10 @@ public class EstudianteRepository {
 
             String sqlAsignacion =
                     "INSERT INTO asignacion_cursos "
-                    + "(id_asignacion, id_seccion, id_curso, "
-                    + "id_docente, id_matricula) "
+                    + "(id_asignacion, id_seccion, id_curso, id_docente, id_matricula) "
                     + "VALUES (?, ?, ?, ?, ?)";
 
-            try (PreparedStatement pstm =
-                    conn.prepareStatement(sqlAsignacion)) {
+            try (PreparedStatement pstm = conn.prepareStatement(sqlAsignacion)) {
 
                 pstm.setString(1, nuevoIdAsignacion);
                 pstm.setString(2, idSeccion);
@@ -450,46 +453,40 @@ public class EstudianteRepository {
                 pstm.executeUpdate();
             }
 
-            // ==========================================
-            // CONFIRMAR TRANSACCIÓN
-            // ==========================================
-
             conn.commit();
-
-            estudiante.setIdEstudainte(
-                    nuevoIdEstudiante);
+            estudiante.setIdEstudiante(nuevoIdEstudiante);
 
         } catch (Exception e) {
 
             try {
-
                 conn.rollback();
-
             } catch (SQLException ex) {
-
                 // Se conserva el error original.
             }
 
             throw new RuntimeException(
-                    "Error al registrar el estudiante "
-                    + "con su curso: "
+                    "Error al registrar el estudiante con su curso: "
                     + e.getMessage(), e);
 
         } finally {
 
             try {
-
                 conn.setAutoCommit(true);
-
             } catch (SQLException ex) {
-
                 // No crítico.
             }
         }
     }
 
     /**
-     * CRUD - ACTUALIZAR
+     * Sobrecarga del método registrarConCurso aceptando un objeto Curso.
+     */
+    public void registrarConCurso(Estudiante estudiante, Curso curso) {
+        registrarConCurso(estudiante, curso.getIdCurso());
+    }
+
+    /**
+     * Actualiza un estudiante existente.
      */
     public void actualizar(Estudiante estudiante) throws Exception {
 
@@ -507,13 +504,8 @@ public class EstudianteRepository {
 
             pstm.setString(1, estudiante.getNombre());
             pstm.setString(2, estudiante.getApellido());
-            pstm.setString(
-                    3,
-                    estudiante.getCorreoElectronico());
-
-            pstm.setString(
-                    4,
-                    estudiante.getIdEstudainte());
+            pstm.setString(3, estudiante.getCorreoElectronico());
+            pstm.setString(4, estudiante.getIdEstudiante());
 
             pstm.executeUpdate();
 
@@ -526,13 +518,7 @@ public class EstudianteRepository {
     }
 
     /**
-     * CRUD - ELIMINAR
-     *
-     * Primero elimina las asignaciones,
-     * después las matrículas
-     * y finalmente el estudiante.
-     *
-     * Esto evita errores por claves foráneas.
+     * Elimina un estudiante y sus relaciones asociadas.
      */
     public void eliminar(String idEstudiante) {
 
@@ -555,8 +541,7 @@ public class EstudianteRepository {
 
         try {
 
-            conn = DataBaseConnection
-                    .getConnectionDataBase();
+            conn = DataBaseConnection.getConnectionDataBase();
 
         } catch (Exception e) {
 
@@ -569,59 +554,28 @@ public class EstudianteRepository {
 
             conn.setAutoCommit(false);
 
-            // ==========================================
-            // 1. ELIMINAR ASIGNACIONES
-            // ==========================================
-
-            try (PreparedStatement pstm =
-                    conn.prepareStatement(
-                            sqlAsignaciones)) {
-
+            try (PreparedStatement pstm = conn.prepareStatement(sqlAsignaciones)) {
                 pstm.setString(1, idEstudiante);
-
                 pstm.executeUpdate();
             }
 
-            // ==========================================
-            // 2. ELIMINAR MATRÍCULAS
-            // ==========================================
-
-            try (PreparedStatement pstm =
-                    conn.prepareStatement(
-                            sqlMatriculas)) {
-
+            try (PreparedStatement pstm = conn.prepareStatement(sqlMatriculas)) {
                 pstm.setString(1, idEstudiante);
-
                 pstm.executeUpdate();
             }
 
-            // ==========================================
-            // 3. ELIMINAR ESTUDIANTE
-            // ==========================================
-
-            try (PreparedStatement pstm =
-                    conn.prepareStatement(
-                            sqlEstudiante)) {
-
+            try (PreparedStatement pstm = conn.prepareStatement(sqlEstudiante)) {
                 pstm.setString(1, idEstudiante);
-
                 pstm.executeUpdate();
             }
-
-            // ==========================================
-            // CONFIRMAR
-            // ==========================================
 
             conn.commit();
 
         } catch (Exception e) {
 
             try {
-
                 conn.rollback();
-
             } catch (SQLException ex) {
-
                 // Se conserva el error original.
             }
 
@@ -632,13 +586,89 @@ public class EstudianteRepository {
         } finally {
 
             try {
-
                 conn.setAutoCommit(true);
-
             } catch (SQLException ex) {
-
                 // No crítico.
             }
         }
+    }
+
+    /**
+     * Guarda una nueva calificación para un estudiante.
+     */
+   /**
+     * Guarda una nueva calificación para un estudiante.
+     */
+    public void guardarCalificacion(String idEstudiante, String idDocente, String idCurso, double nota, String descripcion) throws Exception {
+        
+        Connection conn = DataBaseConnection.getConnectionDataBase();
+
+        String sql = "INSERT INTO calificaciones "
+                + "(id_estudiante, id_docente, id_curso, nota, descripcion, fecha_registro) "
+                + "VALUES (?, ?, ?, ?, ?, CURDATE())";
+
+        try (PreparedStatement pstm = conn.prepareStatement(sql)) {
+
+            pstm.setString(1, idEstudiante);
+            pstm.setString(2, idDocente);
+            pstm.setString(3, idCurso);
+            pstm.setDouble(4, nota);
+            pstm.setString(5, descripcion);
+
+            pstm.executeUpdate();
+
+        } catch (SQLException e) {
+
+            throw new RuntimeException(
+                    "Error al guardar la calificación: "
+                    + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Consulta el listado de calificaciones de un estudiante.
+     */
+    public ObservableList<Calificacion> findCalificacionesByEstudiante(String idEstudiante) throws Exception {
+
+        String sql = "SELECT id_calificacion, id_estudiante, id_docente, id_curso, nota, descripcion, fecha_registro "
+                + "FROM calificaciones "
+                + "WHERE id_estudiante = ?";
+
+        ObservableList<Calificacion> lista = FXCollections.observableArrayList();
+
+        try (PreparedStatement pstm = DataBaseConnection
+                .getConnectionDataBase()
+                .prepareStatement(sql)) {
+
+            pstm.setString(1, idEstudiante);
+
+            try (ResultSet rs = pstm.executeQuery()) {
+
+                while (rs.next()) {
+
+                    // Conversión de java.sql.Date a java.time.LocalDate
+                    java.sql.Date sqlDate = rs.getDate("fecha_registro");
+                    LocalDate fecha = (sqlDate != null) ? sqlDate.toLocalDate() : null;
+
+                    lista.add(new Calificacion(
+                            rs.getInt("id_calificacion"),
+                            rs.getString("id_estudiante"),
+                            rs.getString("id_docente"),
+                            rs.getString("id_curso"),
+                            rs.getDouble("nota"),
+                            rs.getString("descripcion"),
+                            fecha
+                    ));
+                }
+            }
+
+        } catch (SQLException e) {
+
+            throw new RuntimeException(
+                    "Error al consultar las calificaciones: "
+                    + e.getMessage(), e);
+        }
+
+        return lista;
     }
 }

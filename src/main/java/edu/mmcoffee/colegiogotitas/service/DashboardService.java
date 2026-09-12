@@ -1,6 +1,7 @@
 package main.java.edu.mmcoffee.colegiogotitas.service;
 
 import javafx.collections.ObservableList;
+import main.java.edu.mmcoffee.colegiogotitas.model.Calificacion;
 import main.java.edu.mmcoffee.colegiogotitas.model.Curso;
 import main.java.edu.mmcoffee.colegiogotitas.model.Estudiante;
 import main.java.edu.mmcoffee.colegiogotitas.repository.EstudianteRepository;
@@ -21,7 +22,31 @@ public class DashboardService {
         ObservableList<Estudiante> estudiantes = estudianteRepository.findAll();
 
         if (estudiantes == null || estudiantes.isEmpty()) {
-            throw new RuntimeException("Sin datos que mostrar");
+            throw new RuntimeException("Sin datos que mostrar.");
+        }
+
+        return estudiantes;
+    }
+
+    // ==========================================================
+    // BUSCAR ESTUDIANTES POR NOMBRE
+    // ==========================================================
+
+    /**
+     * Busca estudiantes cuyo nombre o apellido coincidan con el
+     * texto recibido. Si el texto viene vacío, se devuelve el
+     * listado completo (equivale a "limpiar" la búsqueda).
+     */
+    public ObservableList<Estudiante> buscarPorNombre(String nombre) throws Exception {
+
+        if (nombre == null || nombre.trim().isEmpty()) {
+            return listStudent();
+        }
+
+        ObservableList<Estudiante> estudiantes = estudianteRepository.findByNombre(nombre);
+
+        if (estudiantes == null || estudiantes.isEmpty()) {
+            throw new RuntimeException("No se encontraron estudiantes con ese nombre.");
         }
 
         return estudiantes;
@@ -120,6 +145,48 @@ public class DashboardService {
         }
 
         estudianteRepository.eliminar(idEstudiante);
+    }
+
+    // ==========================================================
+    // GESTIÓN DE CALIFICACIONES
+    // ==========================================================
+
+    /**
+     * Valida y registra una nueva calificación para un estudiante.
+     */
+    public void registrarCalificacion(
+            String idEstudiante,
+            String idDocente,
+            String idCurso,
+            double nota,
+            String descripcion) throws Exception {
+
+        if (nota < 0 || nota > 100) {
+            throw new RuntimeException("La nota debe estar comprendida entre 0 y 100.");
+        }
+
+        if (descripcion == null || descripcion.trim().isEmpty()) {
+            throw new RuntimeException("Debes ingresar una descripción o motivo para la calificación.");
+        }
+
+        estudianteRepository.guardarCalificacion(idEstudiante, idDocente, idCurso, nota, descripcion.trim());
+    }
+
+    /**
+     * Consulta el listado de calificaciones registradas de un estudiante.
+     */
+    public ObservableList<Calificacion> obtenerCalificacionesEstudiante(String idEstudiante) throws Exception {
+        if (idEstudiante == null || idEstudiante.trim().isEmpty()) {
+            throw new RuntimeException("El ID del estudiante no es válido.");
+        }
+
+        ObservableList<Calificacion> lista = estudianteRepository.findCalificacionesByEstudiante(idEstudiante);
+
+        if (lista == null || lista.isEmpty()) {
+            throw new RuntimeException("El estudiante no tiene calificaciones registradas.");
+        }
+
+        return lista;
     }
 
     // ==========================================================

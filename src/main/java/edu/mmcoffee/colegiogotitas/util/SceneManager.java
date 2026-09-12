@@ -6,7 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
-
+import java.net.URL;
 import main.java.edu.mmcoffee.colegiogotitas.controller.DashboardController;
 import main.java.edu.mmcoffee.colegiogotitas.controller.LoginController;
 import main.java.edu.mmcoffee.colegiogotitas.controller.RegistroController;
@@ -17,8 +17,7 @@ import main.java.edu.mmcoffee.colegiogotitas.service.DashboardService;
 
 public class SceneManager {
 
-    private Stage primaryStage;
-    private final String FXML_PATH = "/main/resources/view/";
+    private final Stage primaryStage;
 
     public SceneManager(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -29,9 +28,14 @@ public class SceneManager {
     // ==========================================================
 
     public void showLoginView() throws Exception {
-        FXMLLoader loader = new FXMLLoader(
-                getClass().getResource(FXML_PATH + "login-view.fxml")
-        );
+       
+        URL fxmlUrl = Thread.currentThread().getContextClassLoader().getResource("main/resources/view/login-view.fxml");
+
+        if (fxmlUrl == null) {
+            throw new IllegalStateException("No se pudo encontrar el archivo FXML en: view/login-view.fxml");
+        }
+
+        FXMLLoader loader = new FXMLLoader(fxmlUrl);
 
         loader.setControllerFactory(clazz -> {
             if (clazz == LoginController.class) {
@@ -59,9 +63,13 @@ public class SceneManager {
     // ==========================================================
 
     public void showRegisterView() throws Exception {
-        FXMLLoader loader = new FXMLLoader(
-                getClass().getResource(FXML_PATH + "registro-view.fxml")
-        );
+        URL fxmlUrl = Thread.currentThread().getContextClassLoader().getResource("main/resources/view/registro-view.fxml");
+
+        if (fxmlUrl == null) {
+            throw new IllegalStateException("No se pudo encontrar el archivo FXML en: view/registro-view.fxml");
+        }
+
+        FXMLLoader loader = new FXMLLoader(fxmlUrl);
 
         loader.setControllerFactory(clazz -> {
             if (clazz == RegistroController.class) {
@@ -89,9 +97,13 @@ public class SceneManager {
     // ==========================================================
 
     public void showDashBoardView() throws Exception {
-        FXMLLoader loader = new FXMLLoader(
-                getClass().getResource(FXML_PATH + "dashboard-view.fxml")
-        );
+        URL fxmlUrl = Thread.currentThread().getContextClassLoader().getResource("main/resources/view/dashboard-view.fxml");
+
+        if (fxmlUrl == null) {
+            throw new IllegalStateException("No se pudo encontrar el archivo FXML en: view/dashboard-view.fxml");
+        }
+
+        FXMLLoader loader = new FXMLLoader(fxmlUrl);
 
         loader.setControllerFactory(clazz -> {
             if (clazz == DashboardController.class) {
@@ -108,10 +120,6 @@ public class SceneManager {
         });
 
         Parent root = loader.load();
-        /*
-         * Se mantiene 950 x 600 porque el Dashboard necesita
-         * espacio para mostrar la tabla y las operaciones del CRUD.
-         */
         Scene scene = new Scene(root, 1000, 650);
         primaryStage.setScene(scene);
         primaryStage.centerOnScreen();
@@ -122,12 +130,7 @@ public class SceneManager {
     // ALERTA
     // ==========================================================
 
-    public void showInfoAlert(
-            String head,
-            String title,
-            String content,
-            AlertType type) {
-
+    public void showInfoAlert(String head, String title, String content, AlertType type) {
         Alert alert = new Alert(type);
         alert.initOwner(this.primaryStage);
         alert.setTitle(title);

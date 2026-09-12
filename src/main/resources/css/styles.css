@@ -199,3 +199,95 @@
     -fx-background-color: derive(-brand-green, 55%);
     -fx-text-fill: -text-dark;
 }
+
+/* =========================================================
+   Estilos corregidos para Cuadros de Diálogo (DialogPane)
+   ========================================================= */
+.dialog-pane.custom-dialog {
+    -fx-background-color: #FBFAF6;
+}
+
+.dialog-pane.custom-dialog .header-panel {
+    -fx-background-color: #EFF2ED;
+    -fx-padding: 10px;
+}
+
+.dialog-pane.custom-dialog .header-panel .label {
+    -fx-text-fill: -header-dark;
+    -fx-font-weight: bold;
+}
+
+.dialog-pane.custom-dialog .content {
+    -fx-background-color: #FBFAF6;
+    -fx-padding: 15px;
+}
+
+.dialog-pane.custom-dialog .label {
+    -fx-text-fill: -text-dark;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.dialog-pane.custom-dialog .text-field {
+    -fx-background-color: #F3F1E9;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-border-color: transparent;
+    -fx-padding: 6px 10px;
+    -fx-text-fill: -text-dark;
+}
+
+.dialog-pane.custom-dialog .text-field:focused {
+    -fx-border-color: -brand-brown;
+}
+
+.dialog-pane.custom-dialog .button-bar {
+    -fx-background-color: #FBFAF6;
+    -fx-padding: 10px;
+}
+
+.dialog-pane.custom-dialog .button {
+    -fx-background-color: -brand-brown;
+    -fx-text-fill: white;
+    -fx-background-radius: 10px;
+    -fx-padding: 8px 16px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.dialog-pane.custom-dialog .button:hover {
+    -fx-background-color: -brand-brown-dark;
+}
+
+/* Tabla dentro del diálogo */
+.dialog-pane.custom-dialog .table-view {
+    -fx-background-color: transparent;
+    -fx-border-color: #d1d5db;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+
+.dialog-pane.custom-dialog .table-view .column-header-background {
+    -fx-background-color: -header-dark;
+    -fx-background-radius: 8px 8px 0 0;
+}
+
+.dialog-pane.custom-dialog .table-view .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+}
+
+.dialog-pane.custom-dialog .table-view .table-row-cell {
+    -fx-background-color: white;
+    -fx-border-color: transparent transparent #e5e0d3 transparent;
+}
+
+.dialog-pane.custom-dialog .table-view .table-row-cell:odd {
+    -fx-background-color: #F7F5EE;
+}
+
+.dialog-pane.custom-dialog .table-view .table-row-cell:selected {
+    -fx-background-color: derive(-brand-green, 55%);
+    -fx-text-fill: -text-dark;
+}
